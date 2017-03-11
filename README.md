@@ -48,7 +48,11 @@ I have supplised my database structure and data within the files incase you wish
 </ol>
 
 Usage: 
+- LoginIn/Signup page:
+![login_signup image](https://cloud.githubusercontent.com/assets/13851941/23819282/02f38814-05fc-11e7-8b61-a6e25cc15471.png)
+
+<br> 
+
 
 <b> Credits: Humza Ahmed </b>
 
-License: Finally, include a section for the license of your project. For more information on choosing a license, check out GitHub’s licensing guide!
