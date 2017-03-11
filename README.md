@@ -16,6 +16,7 @@ It allows uses to login or sign up (as only registered users can vote) to the sy
 <h4>Requires:</h4>
 - Netbeans
 
+<h4>Instructions:</h4>
 <ol>
 <li> Download/Clone from the branch. </li>
 <li> Open in Netbbeans </li>
@@ -29,6 +30,7 @@ It allows uses to login or sign up (as only registered users can vote) to the sy
 - MySQL
 - Glassfish server (testing was done on this and comes with Netbeans)
 
+<h4>Instructions:</h4>
 <ol>
 <li> Download/Clone latest version </li>
 <li> Open up in Netbeans </li> 
