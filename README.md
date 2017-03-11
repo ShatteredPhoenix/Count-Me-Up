@@ -47,7 +47,7 @@ I have supplised my database structure and data within the files incase you wish
 <li> Run the Application - If set up is correct it should work </li>
 </ol>
 
-Usage: 
+Usage: The Web App In Action:
 - <i><b>LoginIn/Signup page:</b></i>
 ![login_signup image](https://cloud.githubusercontent.com/assets/13851941/23819282/02f38814-05fc-11e7-8b61-a6e25cc15471.png)
 
@@ -63,10 +63,17 @@ Usage:
 - <i><b>Account Created:</b></i>  
 ![account created](https://cloud.githubusercontent.com/assets/13851941/23819348/ef09fc06-05fc-11e7-91d8-a1d66b3e94b9.png)
 
-<b> Note: With the vote rejected the results were updated correctly while the account was created </b>
+<b> Note: With the vote rejected the results were updated correctly while the account was created </b> 
 
-<br> 
+<h3> Conclusion and Findings: </h3> 
 
+After much work on this project and the limitations given, I could not use PHP which I replaced with JQuery/Javascript and used Java Servlets for the backend with regular HTML and JSP pages for the front end. 
+
+The servlets are used to access the SQL database and perform various operations such as adding a new user and validating an exsisting users account for signing in. In addition to this they also add and remove votes from users and candidates.
+
+The total votes and candidate votes which is displayed on the Login page and is updated every second via Javascript/Ajax and are counted and talleyed in a seperate function within the VoteCounter servlet. 
+
+For any questions you can contact me via LinkedIn and this Github account.
 
 <b> Credits: Humza Ahmed </b>
 
