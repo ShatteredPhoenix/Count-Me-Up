@@ -47,8 +47,8 @@ I have supplised my database structure and data within the files incase you wish
 <li> Run the Application - If set up is correct it should work </li>
 </ol>
 
-Usage: The next section is usage, in which you instruct other people on how to use your project after they’ve installed it. This would also be a good place to include screenshots of your project in action.
+Usage: 
 
-Credits: Include a section for credits in order to highlight and link to the authors of your project.
+<b> Credits: Humza Ahmed </b>
 
 License: Finally, include a section for the license of your project. For more information on choosing a license, check out GitHub’s licensing guide!
