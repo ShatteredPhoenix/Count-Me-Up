@@ -35,28 +35,30 @@ public class Validation extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    /*Closest thing to Constants in JAVA but these are the database connection paramters.*/
+    private static final String URL = "jdbc:mysql://localhost:3306/countmeup"; // url to the sql database running on localhost - may need to be changed to work with other machines
+    private static final String USERNAME = "root"; // Accessing the database as root for the purporse of this assignment
+    private static final String PSW = "Spiderman786"; // Random Password chosen for root.
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         /* TODO output your page here. You may use following sample code. */
+        PrintWriter out = response.getWriter();
         String logIn = request.getParameter("LogIn"); // store the value of Login Button, will be used later to determine which button was clicked.
         String Signup = request.getParameter("SignUp"); //store value of Signup button to register a user to the database.
 
         if (logIn != null) { // if Login button value is not null i.e it has been clicked
-            LogIn(request, response); // call the Login function which logs the user in then passes their vote count to the VotePage.
+            LogIn(request, response, URL, USERNAME, PSW, out); // call the Login function which logs the user in then passes their vote count to the VotePage.
         } else if (Signup != null) {
-            SignUp(request, response); // Call the signup function which basically adds the user to the database and gives them 3 votes.
+            SignUp(request, response, URL, USERNAME, PSW, out); // Call the signup function which basically adds the user to the database and gives them 3 votes.
         }
     }
 
     /*This will register any new users - it should be noted all ysers by default have 3 votes*/
-    protected void SignUp(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        PrintWriter out = response.getWriter(); // Writer needed
-        String url = "jdbc:mysql://localhost:3306/users"; // url to the sql database running on localhost - may need to be changed to work with other machines
-        String username = "root"; // Accessing the database as root for the purporse of this assignment
-        String password = "Spiderman786"; // Random Password chosen for root.
+    protected void SignUp(HttpServletRequest request, HttpServletResponse response, String url, String username, String password, PrintWriter out) throws ServletException, IOException {
 
-        Statement stmt = null; // Statement
+        Statement stmt = null; // Statement     
 
         try { //Standard try and catch for exception handling
             Class.forName("com.mysql.jdbc.Driver");  //simplest  way to load the driver required
@@ -67,6 +69,8 @@ public class Validation extends HttpServlet {
 
             stmt = connection.createStatement(); //create the statement
             stmt.executeUpdate("INSERT INTO `users`(Name, Password) VALUE ('" + Name + "','" + Pass + "')");  // Insert new account into Table to allow for more voters
+
+            connection.close(); //close connection when your done.
 
             /*Redirect them back to the login page with an error box made in javascript.*/
             out.println("<script type=\"text/javascript\">");
@@ -84,13 +88,9 @@ public class Validation extends HttpServlet {
         }
 
     }
-    
+
     /*If Login has been pressed then this method will be called, simply put this will validate the users credentials against the sql database before letting proceed*/
-    protected void LogIn(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        PrintWriter out = response.getWriter(); // Writer needed
-        String url = "jdbc:mysql://localhost:3306/users"; // url to the sql database running on localhost - may need to be changed to work with other machines
-        String username = "root"; // Accessing the database as root for the purporse of this assignment
-        String password = "Spiderman786"; // Random Password chosen for root.
+    protected void LogIn(HttpServletRequest request, HttpServletResponse response, String url, String username, String password, PrintWriter out) throws ServletException, IOException {
 
         Statement stmt = null; // Statement
         ResultSet rs = null; // Result Set
@@ -108,14 +108,18 @@ public class Validation extends HttpServlet {
             while (rs.next()) { //go through all the results obtained
                 if (Name.equals(rs.getString("Name")) && Pass.equals(rs.getString("Password"))) { /*if name and password match with any results from the querey
                      then move on (no salts of security for the assignment)*/
-                    String VotesRemaining = rs.getString("Vote Count"); // Make new string and store the vote count as String of the user.
+
+                    String VotesRemaining = rs.getString("Vote Count"); // Make new string and store the vote count as String of the user.               
+
                     int VR = Integer.parseInt(VotesRemaining); // Convert string number into Int.
-                    doGet(request, response, VR); // call doGet which will forward user onto Voting Page along with the reamining votes they have
+                    String Uname = rs.getString("Name"); // get the name of the user thats logging in from the database
+                    connection.close(); //close connection when your done.
+                    Forward(request, response, VR, Uname); // call doGet which will forward user onto Voting Page along with the reamining votes they have
                 }
             }
 
             /*Redirect them back to the login page with an error box made in javascript if login credentials are invalid.
-            Assuming they haven't been redirected to the votepage by the above validation this code will occur*/
+             Assuming they haven't been redirected to the votepage by the above validation this code will occur*/
             out.println("<script type=\"text/javascript\">");
             out.println("alert('User or password incorrect');");
             out.println("location='index.html';");
@@ -131,26 +135,34 @@ public class Validation extends HttpServlet {
         }
     }
 
+    //Simply use dispatcher to forward users onto the voting Page
+    protected void Forward(HttpServletRequest request, HttpServletResponse response, int Votes, String User)
+            throws ServletException, IOException {
+        //Set votes remaining attribute for the current user - Votes count is retrived from the database..
+        request.setAttribute("VoteCount", Votes);
+
+        //Store username attribbute, to remember which user is logged in and pass it onto the vote page.
+        request.setAttribute("User", User);
+
+        String address = "/WEB-INF/VotePage.jsp"; //Hidden from nonregistered users
+
+        //forward onto the VotingPage along with their remaining votes to be displayed
+        request.getRequestDispatcher(address).forward(request, response);
+    }
+
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
      * @param request servlet request
      * @param response servlet response
-     * @param Votes
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-   //Simply use dispatcher to forward users onto the voting Page
-    protected void doGet(HttpServletRequest request, HttpServletResponse response, int Votes)
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //Set votes remaining attribute for the current user - Votes count is retrived from the database..
-        request.setAttribute("VoteCount", Votes); 
-        
-        String address = "/WEB-INF/VotePage.jsp"; //Hidden from nonregistered users
-        
-        //forward onto the VotingPage along with their remaining votes to be displayed
-        request.getRequestDispatcher(address).forward(request, response); 
+        processRequest(request, response);
     }
 
     /**
