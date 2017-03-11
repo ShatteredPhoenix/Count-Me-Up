@@ -29,6 +29,24 @@ It allows uses to login or sign up (as only registered users can vote) to the sy
 - MySQL
 - Glassfish server (testing was done on this and comes with Netbeans)
 
+<ol>
+<li> Download/Clone latest version </li>
+<li> Open up in Netbeans </li> 
+<li> Open and Edit VoteCounter.Java and Validation.Java as described below: </li> <br> 
+Change <b>URL, USERNAME and PSW</b> Strings in Validation.Java and VoteCounter.Java to match your MySQL server setup - in addition to this make sure your database contains the tables 'users' and 'candidates' with the following table setup's:<br><br>
+
+users:<br>
+ID | Name | Password | Vote Count | <br><br>
+
+
+candidates: <br>
+ID | Name | Votes | <br><br>
+
+I have supplised my database structure and data within the files incase you wish to use it instead. They are located within the 'Database SQL Files' folder. <br><br>
+
+<li> Run the Application - If set up is correct it should work </li>
+</ol>
+
 Usage: The next section is usage, in which you instruct other people on how to use your project after they’ve installed it. This would also be a good place to include screenshots of your project in action.
 
 Credits: Include a section for credits in order to highlight and link to the authors of your project.
