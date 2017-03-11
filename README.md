@@ -48,8 +48,22 @@ I have supplised my database structure and data within the files incase you wish
 </ol>
 
 Usage: 
-- LoginIn/Signup page:
+- <i><b>LoginIn/Signup page:</b></i>
 ![login_signup image](https://cloud.githubusercontent.com/assets/13851941/23819282/02f38814-05fc-11e7-8b61-a6e25cc15471.png)
+
+- <i><b>Sucessful Log in and Voting Page:</b></i>
+![jamesvote](https://cloud.githubusercontent.com/assets/13851941/23819345/ef0965e8-05fc-11e7-8c91-dba7103ee35d.png)
+
+- <i><b>Vote Accepted:</b></i>
+![james vote accepted](https://cloud.githubusercontent.com/assets/13851941/23819347/ef09f666-05fc-11e7-9252-b7eacf6ec66c.png)
+
+- <i><b>Vote Rejected</b></i>
+![vote rejected](https://cloud.githubusercontent.com/assets/13851941/23819346/ef097768-05fc-11e7-91c6-06bca50818db.png)
+
+- <i><b>Account Created:</b></i>  
+![account created](https://cloud.githubusercontent.com/assets/13851941/23819348/ef09fc06-05fc-11e7-91d8-a1d66b3e94b9.png)
+
+<b> Note: With the vote rejected the results were updated correctly while the account was created </b>
 
 <br> 
 
