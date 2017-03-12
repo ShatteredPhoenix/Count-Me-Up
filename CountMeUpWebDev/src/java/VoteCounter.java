@@ -45,7 +45,7 @@ public class VoteCounter extends HttpServlet {
     private static final String PSW = "Spiderman786"; // Random Password chosen for root.
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, ClassNotFoundException, SQLException {
         response.setContentType("text/html;charset=UTF-8");
         /*Define the paramters once and then pass them onto appropriate functions instead of redefining them. */
         String RadioBox = request.getParameter("Vote"); // Get the radio button that was checked, only one vote at a time and each button has a unique value associcated with it which is the same as the candidates ID in the table.
@@ -54,36 +54,37 @@ public class VoteCounter extends HttpServlet {
         Statement stmt = null; // Statement
         Statement Ustmt = null; // Statement
 
+        Class.forName("com.mysql.jdbc.Driver");  //simplest  way to load the driver required
+        Connection connection = (Connection) DriverManager.getConnection(URL, USERNAME, PSW); // make the connection
+
         // Swith case to determine which button was pressed and then call the addVote function with the appropriate ID being sent as a paramter.
         switch (RadioBox) {
             case "1":
-                addVote(request, response, RadioBox, URL, USERNAME, PSW, out);
+                addVote(request, response, RadioBox, connection, out);
                 break;
             case "2":
-                addVote(request, response, RadioBox, URL, USERNAME, PSW, out);
+                addVote(request, response, RadioBox, connection, out);
                 break;
             case "3":
-                addVote(request, response, RadioBox, URL, USERNAME, PSW, out);
+                addVote(request, response, RadioBox, connection, out);
                 break;
             case "4":
-                addVote(request, response, RadioBox, URL, USERNAME, PSW, out);
+                addVote(request, response, RadioBox, connection, out);
                 break;
             case "5":
-                addVote(request, response, RadioBox, URL, USERNAME, PSW, out);
+                addVote(request, response, RadioBox, connection, out);
                 break;
         }
     }
 
     // Add vote to the correct candidate depending on which ID was selected-  also give the paramters for the database connection from main rather than redefining them in the function. 
-    protected void addVote(HttpServletRequest req, HttpServletResponse resp, String Cand, String url, String username, String password, PrintWriter out)
+    protected void addVote(HttpServletRequest req, HttpServletResponse resp, String Cand, Connection connection, PrintWriter out)
             throws ServletException, IOException {
 
         Statement stmt = null; // Statement
         ResultSet rs = null; // Result Set
 
         try {
-            Class.forName("com.mysql.jdbc.Driver");  //simplest  way to load the driver required
-            Connection connection = (Connection) DriverManager.getConnection(url, username, password); // make the connection
 
             stmt = connection.createStatement(); //create the statement
 
@@ -101,9 +102,9 @@ public class VoteCounter extends HttpServlet {
 
                 stmt.executeUpdate("UPDATE candidates SET `Votes` ='" + VC + "' WHERE `ID` ='" + Cand + "'"); //Update the candidates vote count to the new number.
 
-                subUserVote(req, resp, UN, url, username, password, out); //subtract the votes remaining for the user by passing on the user name
-               connection.close();
-               
+                subUserVote(req, resp, UN, connection, out); //subtract the votes remaining for the user by passing on the user name
+                connection.close();
+
                 /*If user has no votes remaining then direct them back to the login page and inform them they are out of votes*/
                 out.println("<script type=\"text/javascript\">");
                 out.println("alert('Vote Accepted');");
@@ -122,23 +123,18 @@ public class VoteCounter extends HttpServlet {
             out.println("SQLState: " + e.getSQLState());
             out.println("VendorError: " + e.getErrorCode());
             throw new IllegalStateException("Cannot connect the database!", e); //used to catch any other exception that may be generated
-        } catch (ClassNotFoundException ex) {
-            out.println(ex); // if class not found which normally occurs if JDBC driver is not in class path
         }
     }
 
     //subtract the vote from the user who just voted - again passing paramters that are needed to make the database connection rather than redefine them
-    protected void subUserVote(HttpServletRequest req, HttpServletResponse resp, String Usr, String url, String username, String password, PrintWriter out)
+    protected void subUserVote(HttpServletRequest req, HttpServletResponse resp, String Usr, Connection connection, PrintWriter out)
             throws ServletException, IOException {
 
         Statement stmt = null; // Statement
         Statement Ustmt = null; // Statement
         ResultSet rs = null; // Result Set
-        //  ResultSet URS = null; // Updated result set
 
         try {
-            Class.forName("com.mysql.jdbc.Driver");  //simplest  way to load the driver required
-            Connection connection = (Connection) DriverManager.getConnection(url, username, password); // make the connection
 
             stmt = connection.createStatement(); //create the statement
 
@@ -158,8 +154,6 @@ public class VoteCounter extends HttpServlet {
             out.println("SQLState: " + e.getSQLState());
             out.println("VendorError: " + e.getErrorCode());
             throw new IllegalStateException("Cannot connect the database!", e); //used to catch any other exception that may be generated
-        } catch (ClassNotFoundException ex) {
-            out.println(ex); // if class not found which normally occurs if JDBC driver is not in class path
         }
     }
 
@@ -247,7 +241,12 @@ public class VoteCounter extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        PrintWriter out = response.getWriter();
+        try {
+            processRequest(request, response);
+        } catch (ClassNotFoundException | SQLException ex) {
+            out.println(ex);
+        }
     }
 
     /**

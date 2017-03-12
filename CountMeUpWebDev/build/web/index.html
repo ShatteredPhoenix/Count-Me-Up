@@ -15,7 +15,7 @@ and open the template in the editor.
         <script>
             var interval = 1000;  // 1000 = 1 second, 3000 = 3 seconds
             function Update() {  // Update Function
-                $.get("VoteCounter", function (responseJson) {                 // Execute Ajax GET request on URL of "someservlet" and execute the following function with Ajax response JSON...
+                $.get("VoteCounter", function (responseJson) {                 // Execute Ajax GET request on URL of "VoteCounter" and execute the following function with Ajax response JSON...
                     var $select = $("#Div1");                           // Locate HTML DOM element with ID "someselect".     
                     $.each(responseJson, function (key, value) {
                         $("<option>").val(key).text(key).appendTo($select);

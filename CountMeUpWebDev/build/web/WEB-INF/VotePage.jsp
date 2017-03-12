@@ -22,7 +22,7 @@
                 <h1> Votes Remaining: <%=VC%> </h1>
                 <h3> Please Select Who You Want You Vote For: </h3> 
                 <label> Candidate 1: </label>
-                <input type="radio" name="Vote" value="1">
+                <input type="radio" name="Vote" value="1" checked="checked">
                 <br>
                 <label> Candidate 2: </label>
                 <input type="radio" name="Vote" value="2" >

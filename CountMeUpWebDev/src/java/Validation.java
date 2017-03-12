@@ -34,35 +34,40 @@ public class Validation extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     * @throws java.sql.SQLException
+     * @throws java.lang.ClassNotFoundException
      */
-    /*Closest thing to Constants in JAVA but these are the database connection paramters.*/
-    private static final String URL = "jdbc:mysql://localhost:3306/countmeup"; // url to the sql database running on localhost - may need to be changed to work with other machines
-    private static final String USERNAME = "root"; // Accessing the database as root for the purporse of this assignment
-    private static final String PSW = "Spiderman786"; // Random Password chosen for root.
-
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException, ClassNotFoundException {
         response.setContentType("text/html;charset=UTF-8");
         /* TODO output your page here. You may use following sample code. */
         PrintWriter out = response.getWriter();
         String logIn = request.getParameter("LogIn"); // store the value of Login Button, will be used later to determine which button was clicked.
         String Signup = request.getParameter("SignUp"); //store value of Signup button to register a user to the database.
 
-        if (logIn != null) { // if Login button value is not null i.e it has been clicked
-            LogIn(request, response, URL, USERNAME, PSW, out); // call the Login function which logs the user in then passes their vote count to the VotePage.
-        } else if (Signup != null) {
-            SignUp(request, response, URL, USERNAME, PSW, out); // Call the signup function which basically adds the user to the database and gives them 3 votes.
+        /*Closest thing to Constants in JAVA but these are the database connection paramters.*/
+        final String URL = "jdbc:mysql://localhost:3306/countmeup"; // url to the sql database running on localhost - may need to be changed to work with other machines
+        final String USERNAME = "root"; // Accessing the database as root for the purporse of this assignment
+        final String PSW = "Spiderman786"; // Random Password chosen for root.
+
+        Class.forName("com.mysql.jdbc.Driver");  //simplest  way to load the driver required
+        Connection connection = (Connection) DriverManager.getConnection(URL, USERNAME, PSW); // make the connection
+        
+        if (logIn
+                != null) { // if Login button value is not null i.e it has been clicked
+            LogIn(request, response, connection, out); // call the Login function which logs the user in then passes their vote count to the VotePage.
+        } else if (Signup
+                != null) {
+            SignUp(request, response, connection, out); // Call the signup function which basically adds the user to the database and gives them 3 votes.
         }
     }
 
     /*This will register any new users - it should be noted all ysers by default have 3 votes*/
-    protected void SignUp(HttpServletRequest request, HttpServletResponse response, String url, String username, String password, PrintWriter out) throws ServletException, IOException {
+    protected void SignUp(HttpServletRequest request, HttpServletResponse response, Connection connection, PrintWriter out) throws ServletException, IOException {
 
         Statement stmt = null; // Statement     
 
         try { //Standard try and catch for exception handling
-            Class.forName("com.mysql.jdbc.Driver");  //simplest  way to load the driver required
-            Connection connection = (Connection) DriverManager.getConnection(url, username, password); // make the connection
 
             String Name = request.getParameter("uname"); // obtain the name from the html forum
             String Pass = request.getParameter("psw"); // obtain the password
@@ -83,21 +88,17 @@ public class Validation extends HttpServlet {
             out.println("SQLState: " + e.getSQLState());
             out.println("VendorError: " + e.getErrorCode());
             throw new IllegalStateException("Cannot connect the database!", e); //used to catch any other exception that may be generated
-        } catch (ClassNotFoundException ex) {
-            out.println(ex); // if class not found which normally occurs if JDBC driver is not in class path
         }
 
     }
 
     /*If Login has been pressed then this method will be called, simply put this will validate the users credentials against the sql database before letting proceed*/
-    protected void LogIn(HttpServletRequest request, HttpServletResponse response, String url, String username, String password, PrintWriter out) throws ServletException, IOException {
+    protected void LogIn(HttpServletRequest request, HttpServletResponse response, Connection connection, PrintWriter out) throws ServletException, IOException {
 
         Statement stmt = null; // Statement
         ResultSet rs = null; // Result Set
 
         try { //Standard try and catch for exception handling
-            Class.forName("com.mysql.jdbc.Driver");  //simplest  way to load the driver required
-            Connection connection = (Connection) DriverManager.getConnection(url, username, password); // make the connection
 
             String Name = request.getParameter("uname"); // obtain the name from the html forum
             String Pass = request.getParameter("psw"); // obtain the password
@@ -130,8 +131,6 @@ public class Validation extends HttpServlet {
             out.println("SQLState: " + e.getSQLState());
             out.println("VendorError: " + e.getErrorCode());
             throw new IllegalStateException("Cannot connect the database!", e); //used to catch any other exception that may be generated
-        } catch (ClassNotFoundException ex) {
-            out.println(ex); // if class not found which normally occurs if JDBC driver is not in class path
         }
     }
 
@@ -162,7 +161,12 @@ public class Validation extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+            PrintWriter out = response.getWriter(); // needed to print out exceptions
+        try {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            out.println(ex);
+        }
     }
 
     /**
@@ -176,7 +180,13 @@ public class Validation extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+        PrintWriter out = response.getWriter(); // needed to print out exceptions
+        try {
+            processRequest(request, response);
+        } catch (SQLException | ClassNotFoundException ex) {
+            out.println(ex);
+        }
     }
 
     /**
