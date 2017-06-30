@@ -1,6 +1,6 @@
 <h2>Project name: Count Me Up</h2>
 <b>Description:</b> <br>
-This is a technical assignment that had to be done for the BBC Hiring Event
+This is a technical assignment I did in my spare timet
 
 <h3>Information: Initial Branch:</h3>
 
